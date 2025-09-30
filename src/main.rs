@@ -48,3 +48,54 @@ fn main() {
         );
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_standard_package() {
+        // Small dimensions, light weight
+        assert_eq!(sort(10.0, 10.0, 10.0, 5.0), "STANDARD");
+        assert_eq!(sort(50.0, 50.0, 50.0, 10.0), "STANDARD");
+        // Just under all thresholds
+        assert_eq!(sort(149.0, 149.0, 1.0, 19.9), "STANDARD");
+    }
+
+    #[test]
+    fn test_bulky_by_volume() {
+        // Volume >= 1,000,000 cm³
+        assert_eq!(sort(100.0, 100.0, 100.0, 10.0), "SPECIAL");
+        assert_eq!(sort(200.0, 100.0, 50.0, 15.0), "SPECIAL");
+        // Exactly at threshold
+        assert_eq!(sort(100.0, 100.0, 100.0, 5.0), "SPECIAL");
+    }
+
+    #[test]
+    fn test_bulky_by_dimension() {
+        // One dimension >= 150 cm
+        assert_eq!(sort(150.0, 10.0, 10.0, 10.0), "SPECIAL");
+        assert_eq!(sort(10.0, 150.0, 10.0, 10.0), "SPECIAL");
+        assert_eq!(sort(10.0, 10.0, 150.0, 10.0), "SPECIAL");
+        assert_eq!(sort(200.0, 50.0, 50.0, 15.0), "SPECIAL");
+    }
+
+    #[test]
+    fn test_heavy_package() {
+        // Mass >= 20 kg, not bulky
+        assert_eq!(sort(10.0, 10.0, 10.0, 20.0), "SPECIAL");
+        assert_eq!(sort(50.0, 50.0, 50.0, 25.0), "SPECIAL");
+        assert_eq!(sort(50.0, 50.0, 50.0, 100.0), "SPECIAL");
+    }
+
+    #[test]
+    fn test_rejected_package() {
+        // Both bulky (by volume) and heavy
+        assert_eq!(sort(100.0, 100.0, 100.0, 20.0), "REJECTED");
+        assert_eq!(sort(200.0, 100.0, 50.0, 25.0), "REJECTED");
+
+        // Both bulky (by dimension) and heavy
+        assert_eq!(sort(150.0, 50.0, 50.0, 20.0), "REJECTED");
+        assert_eq!(sort(200.0, 10.0, 10.0, 30.0), "REJECTED");
+    }
+}
