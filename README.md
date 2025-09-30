@@ -166,7 +166,7 @@ pub struct Kilograms(f64);    // Prevents mixing up mass with dimensions
 ## Project Structure
 
 ```
-sorter/
+.
 ├── Cargo.toml          # Project configuration
 ├── README.md           # This file
 └── src/
